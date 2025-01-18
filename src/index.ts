@@ -1,8 +1,18 @@
 import express from "express";
-import bodyParser from "body-parser";
-// import { json } from "body-parser"; another way of importing
-
-
+import { Request, Response } from "express";
+import { ENV_VARS } from "./configs";
 const app = express();
-// const json = bodyParser.json; another way of creating
-app.use(bodyParser.json());
+app.use(express.json());
+
+app.get('/', (req: Request, res: Response)=>{
+    res.status(200).json({
+        message: "Hello Kumar",
+    });
+});
+
+
+const PORT = ENV_VARS.PORT;
+app.listen(PORT, ()=> {
+    console.log(`Server is running on: http://localhost:${PORT}`);
+    
+})
