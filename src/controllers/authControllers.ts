@@ -61,3 +61,45 @@ export const register = async (req: Request, res: Response): Promise<any> => {
         });
     }
 }
+
+export const login = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({
+                error: "All Fileds are Requiered"
+            });
+        }
+
+        const user = await User.findOne({ email: email });
+
+        if (!user) {
+            return res.status(404).json({
+                error: "Email not registered"
+            });
+        }
+
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+        if (!isPasswordCorrect) {
+            return res.status(400).json({
+                error: "Password is incorrect"
+            });
+        }
+
+        const token = await Jwt.sign({ userId: user._id }, ENV_VARS.JWT_SECRET, { expiresIn: "15d" });
+
+        res.status(200).json({
+            user: {
+                ...user.toObject(),
+                token
+            }
+        });
+    } catch (error) {
+        console.log("Error in login controller: ", error);
+        res.status(500).json({
+            error: "Failed to login"
+        });
+    }
+}
