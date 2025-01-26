@@ -103,3 +103,26 @@ export const login = async (req: Request, res: Response): Promise<any> => {
         });
     }
 }
+
+
+export const fetchUser = async (req: Request, res: Response): Promise<any> => {
+    try {
+        // Access only the `id` from `req.user`
+        const userId = req.user?.userId;
+
+        if (!userId) {
+            return res.status(400).json({
+                error: "No UserId found",
+            });
+        }
+
+        console.log(userId); // Log the userId
+        res.status(200).json({
+            userId
+        });
+    } catch (error) {
+        res.status(400).json({
+            error: "No UserId found"
+        });
+    }
+}
